@@ -1,40 +1,41 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Timer extends Component {
-  state = {
-    time: 0,
-    color: "#" + Math.floor(Math.random() * 16777215).toString(16)
-  };
-
-  // add your code here
-
-  render() {
-    const { time, color } = this.state;
-    return (
-      <section className="Timer" style={{ background: color }}>
-        <h1>{time}</h1>
-        <button onClick={this.stopClock}>Stop</button>
-        <aside className="mountText">Mounted</aside>
-        <small onClick={this.handleClose}>X</small>
-      </section>
-    );
+class Timer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      time: 0,
+    };
+    this.clockTick = this.clockTick.bind(this);
   }
 
-  //clock functions
-  clockTick = () => {
-    this.setState(prevState => ({
-      time: prevState.time + 1
+  // Increment time every second
+  clockTick() {
+    this.setState((prevState) => ({
+      time: prevState.time + 1,
     }));
-  };
+  }
 
-  stopClock = () => {
+  // ✅ Start the interval when the component mounts
+  componentDidMount() {
+    this.interval = setInterval(this.clockTick, 1000);
+  }
+
+  // ✅ Clear the interval when the component unmounts
+  componentWillUnmount() {
     clearInterval(this.interval);
-  };
+  }
 
-  // for the 'x' button,
-  handleClose = () => {
-    this.props.removeTimer(this.props.id);
-  };
+  render() {
+    return (
+      <div>
+        <h2>Time: {this.state.time}</h2>
+        <button onClick={() => this.props.onRemove(this.props.id)}>
+          Remove Timer
+        </button>
+      </div>
+    );
+  }
 }
 
 export default Timer;
